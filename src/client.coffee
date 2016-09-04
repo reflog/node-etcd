@@ -11,6 +11,7 @@ defaultRequestOptions =
 
 defaultClientOptions =
   maxRetries: 3
+  randomServers: true
 
 
 # CancellationToken to abort a request
@@ -41,7 +42,7 @@ class Client
     opt = _.defaults (_.clone options), @options, defaultRequestOptions, { method: method }
     opt.clientOptions = _.defaults opt.clientOptions, defaultClientOptions
 
-    servers = _.shuffle @hosts
+    servers = if opt.clientOptions.randomServers then _.shuffle @hosts else @hosts
     token = new CancellationToken servers, opt.clientOptions.maxRetries
     syncResp = @_multiserverHelper servers, opt, token, callback
     if options.synchronous is true
